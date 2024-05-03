@@ -3,27 +3,28 @@ import pandas as pd
 import plotly.express as px
 from datetime import timedelta
 from moduloDiego import calculate_moving_averages, calculate_rsi, calculate_macd
-from streamlit_autorefresh import st_autorefresh
-
-# Certifique-se de que seu Streamlit está atualizado
-# st.experimental_autorefresh é disponível em versões mais recentes do Streamlit.
-st.experimental_autorefresh(interval=600000, key='dataupdate')  # 10 minutos em milissegundos
 
 # Carregar dados
-@st.cache_data
+@st.experimental_memo
 def importar_dados():
     df = pd.read_csv('dadosdf_cripto.csv')
     df['tempo'] = pd.to_datetime(df['tempo'])
     return df
 
+# Botão para recarregar os dados
+if st.button('Recarregar Dados'):
+    st.experimental_rerun()
+
 df = importar_dados()
 
-# Interface
 st.title('Análises de Cripto Moedas')
 st.sidebar.header('Menu')
 
 opcoes = ['Home', 'Visualização', 'Análise', 'Sobre']
 escolha = st.sidebar.selectbox("Escolha uma opção", opcoes)
+
+# A lógica de apresentação de dados e gráficos conforme mencionado anteriormente continua aqui
+
 
 if escolha == 'Visualização':
     st.subheader('Visualização de Dados')
