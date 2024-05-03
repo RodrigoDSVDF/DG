@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 from datetime import timedelta
 from moduloDiego import calculate_moving_averages, calculate_rsi, calculate_macd
+from streamlit_autorefresh import st_autorefresh
 
 # Certifique-se de que seu Streamlit está atualizado
 # st.experimental_autorefresh é disponível em versões mais recentes do Streamlit.
