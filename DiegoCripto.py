@@ -23,58 +23,42 @@ st.sidebar.header('Menu')
 opcoes = ['Home', 'Visualização', 'Análise', 'Sobre']
 escolha = st.sidebar.selectbox("Escolha uma opção", opcoes)
 
-# A lógica de apresentação de dados e gráficos conforme mencionado anteriormente continua aqui
-
-
 if escolha == 'Visualização':
     st.subheader('Visualização de Dados')
     criptomoedas = df['moeda'].unique()
     moeda_selecionada = st.selectbox('Selecione uma Moeda para Visualização:', criptomoedas)
+    
+    # Gráfico de linha para o preço de fechamento
     if st.button(f'Visualizar Gráfico para {moeda_selecionada}'):
         df_moeda = df[df['moeda'] == moeda_selecionada]
         fig = px.line(df_moeda, x='tempo', y='fechamento', title=f'Preço de Fechamento ao Longo do Tempo para {moeda_selecionada}')
         st.plotly_chart(fig)
 
 if escolha == 'Análise':
-    st.subheader('Análise de Correlação e Indicadores de Mercado')
+    st.subheader('Análise de Indicadores de Mercado')
     criptomoedas = df['moeda'].unique()
     moeda_selecionada = st.selectbox('Selecione uma Moeda para Análise Detalhada:', criptomoedas)
+    
     if st.button(f'Analisar {moeda_selecionada}'):
         df_moeda = df[df['moeda'] == moeda_selecionada]
-
-        # Definindo abas específicas
-        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Correlação Geral", "Médias Móveis", "RSI", "MACD", "Volume de Negociação", "Preço de Fechamento (Últimos 20 Dias)"])
-
-        with tab1:
-            fig = px.scatter(df_moeda, x='volume', y='fechamento', trendline="ols",
-                             labels={'volume': 'Volume de Negociação', 'fechamento': 'Preço de Fechamento'},
-                             title=f'Correlação entre Volume e Preço de Fechamento para {moeda_selecionada}')
-            st.plotly_chart(fig)
-
-        with tab2:
-            df_moeda = calculate_moving_averages(df_moeda.copy())
-            fig = px.line(df_moeda, x='tempo', y=['fechamento', 'SMA'],
-                          labels={'value': 'Preço', 'variable': 'Indicadores'},
-                          title=f'Médias Móveis para {moeda_selecionada}')
-            st.plotly_chart(fig)
         
-        with tab3:
-            df_moeda = calculate_rsi(df_moeda.copy())
-            fig = px.line(df_moeda, x='tempo', y='RSI', title=f'RSI para {moeda_selecionada}')
-            st.plotly_chart(fig)
-        
-        with tab4:
-            df_moeda = calculate_macd(df_moeda.copy())
-            fig = px.line(df_moeda, x='tempo', y=['MACD_line', 'MACD_signal'],
-                          labels={'value': 'MACD', 'variable': 'Linhas MACD'},
-                          title=f'MACD para {moeda_selecionada}')
-            st.plotly_chart(fig)
-        
-        with tab5:
-            volume_fig = px.bar(df_moeda, x='tempo', y='volume', title='Volume de Negociação ao Longo do Tempo')
-            st.plotly_chart(volume_fig)
+        # Abas para diferentes análises
+        with st.tabs(["Médias Móveis", "RSI", "MACD"]) as tabs:
+            with st.tab("Médias Móveis"):
+                df_moeda = calculate_moving_averages(df_moeda)
+                fig = px.line(df_moeda, x='tempo', y=['fechamento', 'SMA', 'EMA'], title='Médias Móveis')
+                st.plotly_chart(fig)
+            
+            with st.tab("RSI"):
+                df_moeda = calculate_rsi(df_moeda)
+                fig = px.line(df_moeda, x='tempo', y='RSI', title='Índice de Força Relativa (RSI)')
+                st.plotly_chart(fig)
+            
+            with st.tab("MACD"):
+                df_moeda = calculate_macd(df_moeda)
+                fig = px.line(df_moeda, x='tempo', y=['MACD', 'signal_line'], title='MACD e Linha de Sinal')
+                st.plotly_chart(fig)
 
-        with tab6:
-            df_recente = df_moeda[df_moeda['tempo'] > (df_moeda['tempo'].max() - timedelta(days=20))]
-            close_fig = px.line(df_recente, x='tempo', y='fechamento', title='Preço de Fechamento dos Últimos 20 Dias')
-            st.plotly_chart(close_fig)
+# Adicione mais opções ou detalhes conforme necessário para o menu 'Sobre'
+if escolha == 'Sobre':
+    st.write("Esta aplicação foi desenvolvida para analisar criptomoedas.")
