@@ -4,8 +4,9 @@ import plotly.express as px
 from datetime import timedelta
 from moduloDiego import calculate_moving_averages, calculate_rsi, calculate_macd
 
-# Configura a atualização automática da página
-st_autorefresh(interval=60, key='dataupdate')  # 10 minutos em milissegundos
+# Certifique-se de que seu Streamlit está atualizado
+# st.experimental_autorefresh é disponível em versões mais recentes do Streamlit.
+st.experimental_autorefresh(interval=600000, key='dataupdate')  # 10 minutos em milissegundos
 
 # Carregar dados
 @st.cache_data
