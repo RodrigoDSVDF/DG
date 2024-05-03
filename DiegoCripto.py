@@ -1,9 +1,11 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 from datetime import timedelta
 from moduloDiego import calculate_moving_averages, calculate_rsi, calculate_macd
+
+# Configura a atualização automática da página
+st_autorefresh(interval=60, key='dataupdate')  # 10 minutos em milissegundos
 
 # Carregar dados
 @st.cache_data
@@ -25,7 +27,6 @@ if escolha == 'Visualização':
     st.subheader('Visualização de Dados')
     criptomoedas = df['moeda'].unique()
     moeda_selecionada = st.selectbox('Selecione uma Moeda para Visualização:', criptomoedas)
-
     if st.button(f'Visualizar Gráfico para {moeda_selecionada}'):
         df_moeda = df[df['moeda'] == moeda_selecionada]
         fig = px.line(df_moeda, x='tempo', y='fechamento', title=f'Preço de Fechamento ao Longo do Tempo para {moeda_selecionada}')
@@ -35,7 +36,6 @@ if escolha == 'Análise':
     st.subheader('Análise de Correlação e Indicadores de Mercado')
     criptomoedas = df['moeda'].unique()
     moeda_selecionada = st.selectbox('Selecione uma Moeda para Análise Detalhada:', criptomoedas)
-
     if st.button(f'Analisar {moeda_selecionada}'):
         df_moeda = df[df['moeda'] == moeda_selecionada]
 
